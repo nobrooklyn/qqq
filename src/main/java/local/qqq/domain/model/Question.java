@@ -6,15 +6,18 @@ public class Question {
     private String statement;
     private String[] options;
     private Optional<Answer> answer;
+    private QuestionStatus status;
 
     public Question(String statement) {
         this.statement = statement;
         this.answer = Optional.empty();
+        this.status = QuestionStatus.TODO;
     }
 
     public Question(String statement, String... options) {
         this.statement = statement;
         this.answer = Optional.empty();
+        this.status = QuestionStatus.TODO;
 
         if (options == null || options.length < 2) {
             throw new IllegalArgumentException("options must be two or more items.");
@@ -34,8 +37,11 @@ public class Question {
         return options != null;
     }
 
-    public void answer(String... enteredAnswers) {
-        this.answer = Optional.of(new Answer(enteredAnswers));
+    public void answer(String... enteredAnswers) throws UnmodifiableAnswerException {
+        if (isDone()) {
+            throw new UnmodifiableAnswerException();
+        }
+        answer = Optional.of(new Answer(enteredAnswers));
     }
 
     public Optional<String[]> answer() {
@@ -44,5 +50,25 @@ public class Question {
 
     public boolean hasAnswer() {
         return answer.isPresent();
+    }
+
+    void cancel() {
+        answer = Optional.empty();
+        status = QuestionStatus.TODO;
+    }
+
+    void done() throws AnswerNotFoundException {
+        if (!hasAnswer()) {
+            throw new AnswerNotFoundException();
+        }
+        status = QuestionStatus.DONE;
+    }
+
+    boolean isDone() {
+        return status == QuestionStatus.DONE;
+    }
+
+    void todo() {
+        status = QuestionStatus.TODO;
     }
 }
