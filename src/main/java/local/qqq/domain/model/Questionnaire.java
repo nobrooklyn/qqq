@@ -6,18 +6,24 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class Questionnaire {
-    private String name;
+    private int id;
+    private String title;
     private List<Question> questions;
     private QuestionnaireStatus status;
 
-    public Questionnaire(String name) {
-        this.name = name;
+    public Questionnaire(int id, String title) {
+        this.id = id;
+        this.title = title;
         this.questions = new ArrayList<>();
         this.status = QuestionnaireStatus.TODO;
     }
 
-    public String name() {
-        return name;
+    public int id() {
+        return id;
+    }
+
+    public String title() {
+        return title;
     }
 
     public void add(Question q) {

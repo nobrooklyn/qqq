@@ -3,18 +3,21 @@ package local.qqq.domain.model;
 import java.util.Optional;
 
 public class Question {
+    private int id;
     private String statement;
     private String[] options;
     private Optional<Answer> answer;
     private QuestionStatus status;
 
-    public Question(String statement) {
+    public Question(int id, String statement) {
+        this.id = id;
         this.statement = statement;
         this.answer = Optional.empty();
         this.status = QuestionStatus.TODO;
     }
 
-    public Question(String statement, String... options) {
+    public Question(int id, String statement, String... options) {
+        this.id = id;
         this.statement = statement;
         this.answer = Optional.empty();
         this.status = QuestionStatus.TODO;
@@ -23,6 +26,10 @@ public class Question {
             throw new IllegalArgumentException("options must be two or more items.");
         }
         this.options = options;
+    }
+
+    public int id() {
+        return id;
     }
 
     public String statement() {

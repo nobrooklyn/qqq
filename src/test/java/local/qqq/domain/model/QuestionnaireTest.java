@@ -14,21 +14,24 @@ public class QuestionnaireTest {
     @Test
     public void test_scenario_create_question() throws UnmodifiableAnswerException, AnswerNotCompleteException {
         // create a questionnaire
-        Questionnaire q = new Questionnaire("Test questionnaire");
-        Question q1 = new Question("あなたの名前は？");
-        Question q2 = new Question("あなたの性別は？", "男性", "女性");
+        Questionnaire q = new Questionnaire(1, "Test questionnaire");
+        Question q1 = new Question(1, "あなたの名前は？");
+        Question q2 = new Question(2, "あなたの性別は？", "男性", "女性");
 
         q.add(q1);
         q.add(q2);
 
-        assertThat(q.name(), is("Test questionnaire"));
+        assertThat(q.id(), is(1));
+        assertThat(q.title(), is("Test questionnaire"));
         assertThat(q.count(), is(2));
         q.forEach(qu -> assertFalse(qu.hasAnswer()));
 
+        assertThat(q.get(0).id(), is(1));
         assertThat(q.get(0).statement(), is("あなたの名前は？"));
         assertFalse(q.get(0).hasOptions());
         assertThat(q.get(0).answer(), is(Optional.empty()));
 
+        assertThat(q.get(1).id(), is(2));
         assertThat(q.get(1).statement(), is("あなたの性別は？"));
         assertTrue(q.get(1).hasOptions());
         assertThat(q.get(1).options(), is(new String[] { "男性", "女性" }));
@@ -73,14 +76,14 @@ public class QuestionnaireTest {
     public void test_scenario_error_question() {
         try {
             String[] options = null;
-            new Question("あなたの性別は？", options);
+            new Question(1, "あなたの性別は？", options);
             fail("not occured exception");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("options must be two or more items."));
         }
 
         try {
-            new Question("あなたの性別は？", "男性");
+            new Question(1, "あなたの性別は？", "男性");
             fail("not occured exception");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), is("options must be two or more items."));
