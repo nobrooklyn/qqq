@@ -1,9 +1,12 @@
 package local.qqq.presentation.controller;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
 
 import local.qqq.application.QuestionnaireInteractor;
 import local.qqq.application.QuestionnaireResponse;
@@ -19,14 +22,22 @@ public class QuestionnaireResourceTest {
         Response<QuestionnaireResponse> res = resource.create("test");
 
         assertThat(res.getEntity().getId(), is(1));
+        assertThat(res.getStatus(), is(201));
+        assertThat(res.getReason(), is(HttpStatus.CREATED.getReasonPhrase()));
+        assertThat(res.getMessage(), is("created a new questionnaire"));
+        assertThat(res.getTimestamp(), not(nullValue()));
 
         res = resource.find(1);
 
+        assertThat(res.getStatus(), is(200));
+        assertThat(res.getReason(), is(HttpStatus.OK.getReasonPhrase()));
+        assertThat(res.getMessage(), is("found a questionnaire"));
         assertThat(res.getEntity().getTitle(), is("test"));
         assertThat(res.getEntity().getId(), is(1));
         assertThat(res.getEntity().isDone(), is(false));
 
-        res = resource.add(1, "test question 1", null);
+        String[] options = null;
+        res = resource.add(1, "test question 1", options);
         assertThat(res.getEntity().getQuestions().length, is(1));
         assertThat(res.getEntity().getQuestions()[0].id(), is(1));
         assertThat(res.getEntity().getQuestions()[0].statement(), is("test question 1"));
