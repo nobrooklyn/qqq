@@ -8,18 +8,22 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
-import local.qqq.application.QuestionnaireInteractor;
-import local.qqq.application.QuestionnaireResponse;
-import local.qqq.application.QuestionnaireUseCase;
+import local.qqq.application.QuestionnaireCreateInteractor;
+import local.qqq.application.QuestionnaireCreateUseCase;
+import local.qqq.application.QuestionnaireDisplayInteractor;
+import local.qqq.application.QuestionnaireDisplayUseCase;
+import local.qqq.application.QuestionnaireOutput;
 import local.qqq.infrastructure.database.LocalQuestionnaireDatabase;
 import local.qqq.infrastructure.util.LocalIdGenerator;
 
 public class QuestionnaireResourceTest {
     @Test
     public void test_create_and_find() {
-        QuestionnaireUseCase uc = new QuestionnaireInteractor(new LocalIdGenerator(), new LocalQuestionnaireDatabase());
-        QuestionnaireResource resource = new QuestionnaireResource(uc);
-        Response<QuestionnaireResponse> res = resource.create("test");
+        QuestionnaireCreateUseCase creaotr = new QuestionnaireCreateInteractor(new LocalIdGenerator(),
+                new LocalQuestionnaireDatabase());
+        QuestionnaireDisplayUseCase displayer = new QuestionnaireDisplayInteractor(new LocalQuestionnaireDatabase());
+        QuestionnaireResource resource = new QuestionnaireResource(creaotr, displayer);
+        Response<QuestionnaireOutput> res = resource.create("test");
 
         assertThat(res.getEntity().getId(), is(1));
         assertThat(res.getStatus(), is(201));

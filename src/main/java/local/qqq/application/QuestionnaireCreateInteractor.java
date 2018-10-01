@@ -9,31 +9,25 @@ import local.qqq.domain.model.Questionnaire;
 import local.qqq.domain.model.QuestionnaireRepository;
 
 @Service
-public class QuestionnaireInteractor implements QuestionnaireUseCase {
+public class QuestionnaireCreateInteractor implements QuestionnaireCreateUseCase {
     private final QuestionnaireRepository repository;
     private final IdGenerator idGenerator;
 
     @Autowired
-    public QuestionnaireInteractor(IdGenerator idGenerator, QuestionnaireRepository repository) {
+    public QuestionnaireCreateInteractor(IdGenerator idGenerator, QuestionnaireRepository repository) {
         this.idGenerator = idGenerator;
         this.repository = repository;
     }
 
     @Override
-    public QuestionnaireResponse create(String title) {
+    public QuestionnaireOutput create(String title) {
         Questionnaire questionnaire = new Questionnaire(idGenerator.newId(), title);
         repository.save(questionnaire);
-        return new QuestionnaireResponse(questionnaire);
+        return new QuestionnaireOutput(questionnaire);
     }
 
     @Override
-    public QuestionnaireResponse find(int id) {
-        Questionnaire questionnaire = repository.find(id);
-        return new QuestionnaireResponse(questionnaire);
-    }
-
-    @Override
-    public QuestionnaireResponse addQuestion(int id, String statement, String[] options) {
+    public QuestionnaireOutput addQuestion(int id, String statement, String[] options) {
         Questionnaire questionnaire = repository.find(id);
         if (options == null) {
             questionnaire.add(new Question(questionnaire.count() + 1, statement));
@@ -42,6 +36,6 @@ public class QuestionnaireInteractor implements QuestionnaireUseCase {
         }
         // TODO: add concurrency (duplicate Question id)
         repository.save(questionnaire);
-        return new QuestionnaireResponse(questionnaire);
+        return new QuestionnaireOutput(questionnaire);
     }
 }
