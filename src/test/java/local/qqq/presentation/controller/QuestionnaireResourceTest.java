@@ -8,6 +8,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
+import local.qqq.application.QuestionOutput;
 import local.qqq.application.QuestionnaireCreateInteractor;
 import local.qqq.application.QuestionnaireCreateUseCase;
 import local.qqq.application.QuestionnaireDisplayInteractor;
@@ -39,19 +40,26 @@ public class QuestionnaireResourceTest {
         assertThat(res.getEntity().getTitle(), is("test"));
         assertThat(res.getEntity().getId(), is(1));
         assertThat(res.getEntity().isDone(), is(false));
+        assertThat(res.getEntity().getQuestions().length, is(0));
 
         String[] options = null;
         res = resource.add(1, "test question 1", options);
         assertThat(res.getEntity().getQuestions().length, is(1));
-        assertThat(res.getEntity().getQuestions()[0].id(), is(1));
-        assertThat(res.getEntity().getQuestions()[0].statement(), is("test question 1"));
+        assertThat(res.getEntity().getQuestions()[0].getId(), is(1));
+        assertThat(res.getEntity().getQuestions()[0].getStatement(), is("test question 1"));
 
         res = resource.add(1, "test question 2", "option 1", "option 2");
         assertThat(res.getEntity().getQuestions().length, is(2));
-        assertThat(res.getEntity().getQuestions()[0].id(), is(1));
-        assertThat(res.getEntity().getQuestions()[0].statement(), is("test question 1"));
-        assertThat(res.getEntity().getQuestions()[1].id(), is(2));
-        assertThat(res.getEntity().getQuestions()[1].statement(), is("test question 2"));
+        assertThat(res.getEntity().getQuestions()[0].getId(), is(1));
+        assertThat(res.getEntity().getQuestions()[0].getStatement(), is("test question 1"));
+        assertThat(res.getEntity().getQuestions()[1].getId(), is(2));
+        assertThat(res.getEntity().getQuestions()[1].getStatement(), is("test question 2"));
 
+        Response<QuestionOutput[]> qres = resource.dispalyQuestions(1);
+        assertThat(qres.getEntity().length, is(2));
+        assertThat(qres.getEntity()[0].getId(), is(1));
+        assertThat(qres.getEntity()[0].getStatement(), is("test question 1"));
+        assertThat(qres.getEntity()[1].getId(), is(2));
+        assertThat(qres.getEntity()[1].getStatement(), is("test question 2"));
     }
 }

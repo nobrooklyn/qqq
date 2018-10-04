@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import local.qqq.application.QuestionOutput;
 import local.qqq.application.QuestionnaireCreateUseCase;
 import local.qqq.application.QuestionnaireDisplayUseCase;
 import local.qqq.application.QuestionnaireOutput;
@@ -32,6 +33,13 @@ public class QuestionnaireResource {
         return new Response<>(HttpStatus.CREATED, "created a new questionnaire", output);
     }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response<QuestionnaireOutput> find(@PathVariable int id) {
+        QuestionnaireOutput output = displayer.find(id);
+        return new Response<>(HttpStatus.OK, "found a questionnaire", output);
+    }
+
     @PostMapping("/{id}/q")
     @ResponseStatus(HttpStatus.CREATED)
     public Response<QuestionnaireOutput> add(@PathVariable int id, String statement, String... options) {
@@ -39,11 +47,11 @@ public class QuestionnaireResource {
         return new Response<>(HttpStatus.CREATED, "add a question to questionnaire", output);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/q")
     @ResponseStatus(HttpStatus.OK)
-    public Response<QuestionnaireOutput> find(@PathVariable int id) {
-        QuestionnaireOutput output = displayer.find(id);
-        return new Response<>(HttpStatus.OK, "found a questionnaire", output);
+    public Response<QuestionOutput[]> dispalyQuestions(@PathVariable int id) {
+        QuestionOutput[] output = displayer.find(id).getQuestions();
+        return new Response<>(HttpStatus.OK, "found questions", output);
     }
 
 }
