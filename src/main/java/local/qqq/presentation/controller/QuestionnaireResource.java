@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import local.qqq.application.AnswerOutput;
 import local.qqq.application.QuestionOutput;
+import local.qqq.application.QuestionnaireAnswerUseCase;
 import local.qqq.application.QuestionnaireCreateUseCase;
 import local.qqq.application.QuestionnaireDisplayUseCase;
 import local.qqq.application.QuestionnaireOutput;
@@ -19,11 +21,14 @@ import local.qqq.application.QuestionnaireOutput;
 public class QuestionnaireResource {
     private final QuestionnaireCreateUseCase creator;
     private final QuestionnaireDisplayUseCase displayer;
+    private final QuestionnaireAnswerUseCase answer;
 
     @Autowired
-    public QuestionnaireResource(QuestionnaireCreateUseCase creator, QuestionnaireDisplayUseCase displayer) {
+    public QuestionnaireResource(QuestionnaireCreateUseCase creator, QuestionnaireDisplayUseCase displayer,
+            QuestionnaireAnswerUseCase answer) {
         this.creator = creator;
         this.displayer = displayer;
+        this.answer = answer;
     }
 
     @PostMapping
@@ -52,6 +57,13 @@ public class QuestionnaireResource {
     public Response<QuestionOutput[]> dispalyQuestions(@PathVariable int id) {
         QuestionOutput[] output = displayer.find(id).getQuestions();
         return new Response<>(HttpStatus.OK, "found questions", output);
+    }
+
+    @PostMapping("/{id}/q/{qid}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Response<AnswerOutput> anwswerQuestion(@PathVariable int id, @PathVariable int qid, String... answers) {
+        AnswerOutput output = answer.write(id, qid, answers);
+        return new Response<>(HttpStatus.CREATED, "accepted answers", output);
     }
 
 }
